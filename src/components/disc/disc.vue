@@ -1,9 +1,7 @@
 <template>
-  <div>
     <transition name="slide">
-      <music-list :name="disc.title" :bgImage="disc.cover" :songs="songList"></music-list>
+      <music-list :name="name" :bgImage="bgImage" :songs="songList"></music-list>
     </transition>
-  </div>
 </template>
 
 <script type="text/javascript">
@@ -11,29 +9,48 @@
   import {getDiskSongList} from 'api/recommend'
   import {mapGetters} from 'vuex'
   import {createSong} from 'assets/js/song'
+  import {ERR_OK} from 'api/config'
 
   export default{
     data(){
       return {
-          songList:[]
+        songList: [],
+        bgImage: '',
+        name: ''
       }
     },
     created(){
-      this._getDiskSongList()
+      this._getDiskSongList();
     },
     computed: {
       ...mapGetters([
         'disc'
       ])
     },
+    mounted(){
+      this.bgImage = this.disc.cover;
+      this.name = this.disc.title;
+    },
     methods: {
       _getDiskSongList(){
+        if (!this.disc.content_id) {
+          this.$router.push('/recommend');
+          return
+        }
         getDiskSongList(this.disc.content_id).then(res => {
-          res.data.songlist.forEach((item)=>{
+          if (res.data.code === ERR_OK) {
+            res.data.songlist.forEach((item) => {
               this.songList.push(createSong(item))
-          });
-          console.log(this.disc);
+            });
+          }
+
         })
+      },
+      enter(){
+        console.log('enter')
+      },
+      leave(){
+        console.log('leave')
       }
     },
     components: {
@@ -43,5 +60,12 @@
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
+  .slide-enter-active, .slide-leave-active {
+    transform: translateX(0);
+    transition: all 0.3s;
+  }
 
+  .slide-enter, .slide-leave-to {
+    transform: translateX(100%)
+  }
 </style>

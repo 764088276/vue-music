@@ -2,10 +2,10 @@
   <div class="music-list">
     <header>
       <span class="back" @touchstart="back">返回</span>
-      {{name}}
+      <i>{{name}}</i>
     </header>
     <div class="bg-image" ref="bgImage" :style="bgImg">
-      <div class="random_play" ref="random_play">
+      <div class="random_play" ref="random_play" v-show="bgImage">
         随机播放全部
       </div>
       <div class="filter-layer">
@@ -14,8 +14,12 @@
     <scroll :data="songs" :listenScroll=true class="scroll-wrapper" ref="scrollWrapper" @scroll="scroll">
       <ul class="song-list">
         <li v-for="(song,index) in songs" @click="selectSong(songs,index)">
-          <span class="text">{{song.name}}</span>
-          <span class="singer">{{getSingerName(song)}}</span>
+          <i v-show="rank" :class="rankNum(index+1)">{{index+1}}</i>
+          <div>
+            <span class="text">{{song.name}}</span>
+            <span class="singer">{{getSingerName(song)}}</span>
+          </div>
+
         </li>
       </ul>
       <!--加载的进度条-->
@@ -47,6 +51,10 @@
       songs: {
         type: Array,
         default: []
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     data(){
@@ -66,6 +74,9 @@
       }
     },
     methods: {
+      rankNum(index){
+        return `rank${index}`
+      },
       back(){
         this.$router.back()
       },
@@ -92,7 +103,7 @@
         }
       },
       ...mapActions([
-          'playSong'
+        'playSong'
       ]),
       selectSong(songs, index){
         this.playSong({
@@ -129,6 +140,13 @@
     font-size: 16px;
     color: @color-theme;
     z-index: 1000;
+    i{
+      width:65%;
+      display:inline-block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
     span {
       padding: 0 5px;
       position: absolute;
@@ -162,7 +180,7 @@
   .scroll-wrapper {
     position: absolute;
     left: 0;
-    bottom:60px;
+    bottom: 60px;
     right: 0;
     /*overflow: hidden;*/
   }
@@ -173,9 +191,32 @@
     li {
       line-height: 20px;
       padding: 2px 15px;
+      display: flex;
+      i {
+        color: @color-theme-d;
+        margin: 5px 0;
+        width:30px;
+        text-align: center;
+        display: block;
+        &.rank1 {
+          color: blue;
+        }
+        &.rank2 {
+          color: yellow;
+        }
+        &.rank3 {
+          color: red;
+        }
+      }
+      &>div{
+        width:80%;
+      }
       span {
         display: block;
         margin: 5px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         &.text {
           color: @color-theme;
         }

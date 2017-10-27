@@ -22,7 +22,7 @@
         <div class="cd-wrapper" ref="cdWrapper">
           <img :src="currentSong.image" alt="cd-image" class="song-image" :class="cdRotate">
         </div>
-        <scroll class="lyric-wrapper" :data="lyric.line" v-if="lyric" ref="scroll">
+        <scroll class="lyric-wrapper" :data="lyric.lines" v-if="lyric&&lyric.lines.length>0" ref="scroll">
           <div class="lyric-container">
             <p v-for="(line,index) in lyric.lines"
                ref="lyricLine"
@@ -32,7 +32,7 @@
         </scroll>
         <div class="bottom-dots">
           <span :class="{currentShow:currentShow==='cd'}"></span>
-          <span :class="{currentShow:currentShow==='lyric'}"></span>
+          <span :class="{currentShow:currentShow==='lyric'}" v-show="lyric&&lyric.lines.length>0"></span>
         </div>
         <ul class="play-wrapper">
           <div class="song-progress">
@@ -297,6 +297,7 @@
         setTimeout(() => {
           alert('对不起，该歌曲暂未收录');
           this.songReady = true;
+          this.next()
         }, 600)
       },
       ended(){
@@ -327,6 +328,7 @@
       },
       getLyricData(){
         this.currentSong.getLyric().then(res => {
+
           this.lyric = new Lyric(res, this.lyricHandler);
           if (this.playing) {
             this.lyric.play()
@@ -344,12 +346,18 @@
       },
 //      cd和歌词的切换
       touchBegin(){
+        if (!this.lyric.lines.length&&this.lyric) {
+          return
+        }
         let e = window.event;
         const touch = e.touches[0];
         this.touch.startX = touch.pageX;
         this.touch.startY = touch.pageY;
       },
       touchSlide(){
+        if (!this.lyric.lines.length&&this.lyric) {
+          return
+        }
         let e = window.event;
         let touch = e.touches[0];
         this.touch.moveX = touch.pageX;
@@ -460,7 +468,11 @@
             font-size: @font-size-small;
           }
           span {
-            display: block;
+            display: inline-block;
+            white-space:nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width:70%;
           }
         }
         .icon-xiala {

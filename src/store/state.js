@@ -12,6 +12,7 @@ const state={
   sequenceList:[],
   mode:play_mode.sequence,
   currentIndex:-1,
-  disc:{}
+  disc:{},
+  rankList:{}
 };
 export default state

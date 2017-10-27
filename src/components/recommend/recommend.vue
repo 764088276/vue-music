@@ -87,10 +87,9 @@
       }),
       selectDisc(disc){
           this.$router.push({
-              path:`recommend/${disc.content_id}`
+              path:`/recommend/${disc.content_id}`
           });
         this.setDisc(disc);
-        console.log(this.$store.state.disc)
       }
     },
     components: {
