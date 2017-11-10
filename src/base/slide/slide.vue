@@ -39,11 +39,11 @@
         this.dotsInit();
         this.slideInit();
       }, 20);
-      setTimeout(() => {
-        if (this.autoPlay) {
+      if(this.autoPlay){
+        setTimeout(() => {
           this._autoPlay();
-        }
       }, this.interval);
+      }
     },
     methods: {
       /*获取屏幕宽度*/
@@ -84,7 +84,6 @@
           if (this.autoPlay) {
             clearTimeout(this.timer);
             this.timer = setTimeout(this._autoPlay, this.interval);
-
           }
         });
         window.addEventListener('resize', () => {
@@ -101,9 +100,12 @@
 //      自动轮播的实现
       _autoPlay(){
         let pageIndex = this.slider.getCurrentPage().pageX;
+
         pageIndex += 1;
-        this.slider.goToPage(pageIndex, 0, 400);
-        this.timer = setTimeout(this._autoPlay, this.interval);
+        if(pageIndex>0){
+          this.slider.goToPage(pageIndex, 0, 400);
+        }
+//        this.timer = setTimeout(this._autoPlay, this.interval);
       }
     },
     destoryed(){
@@ -151,7 +153,6 @@
         display: inline-block;
         margin: 0 5px;
         border-radius: 4px;
-        transition: all 0.3s;
         &.active {
           color: #666;
           width: 20px;

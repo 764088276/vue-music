@@ -10,7 +10,7 @@ export function getRecommend() {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg';
   let data = Object.assign({}, commonParams, {
     uin: 0,
-    g_tk: 5391,
+    g_tk: 5381,
     platform: 'h5',
     format: 'json',
     needNewCode: 1
@@ -24,7 +24,7 @@ export function getDiskList() {
   const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg';
   let data = Object.assign({}, commonParams, {
     needNewCode: '0',
-    g_tk: 1340277798,
+    g_tk: 5381,
     format: 'jsonp',
     platform: 'yqq',
     hostUin:'0',

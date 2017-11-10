@@ -1,6 +1,4 @@
-/**
- * Created by HG on 2017/10/11.
- */
+
 import * as types from "./mutation_types"
 
 const mutations = {
@@ -30,6 +28,12 @@ const mutations = {
   },
   [types.SET_RANK_LIST](state, param){
     state.rankList = param;
+  },
+  [types.SET_SEARCH_HISTORY](state, param){
+    state.searchHistory = param;
+  },
+  [types.SET_PLAY_HISTORY](state, param){
+    state.playHistory = param
   }
 };
 export default mutations

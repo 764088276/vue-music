@@ -1,12 +1,19 @@
 <template>
     <div class="loading-component">
-      <p>正在加载...</p>
+      <p>{{text}}</p>
       <img src="./loading.gif" alt="">
     </div>
 </template>
 
 <script type="text/javascript">
-    export default{}
+    export default{
+        props:{
+            text:{
+                type:String,
+                default:'正在加载...'
+            }
+        }
+    }
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>

@@ -5,7 +5,7 @@
       <i>{{name}}</i>
     </header>
     <div class="bg-image" ref="bgImage" :style="bgImg">
-      <div class="random_play" ref="random_play" v-show="bgImage">
+      <div class="random_play" ref="random_play" v-show="bgImage" @click="randomPlayAll">
         随机播放全部
       </div>
       <div class="filter-layer">
@@ -35,7 +35,7 @@
   import scroll from 'base/scroll/scroll'
   import loading from 'base/loading/loading'
   import cssProfix from'assets/js/dom'
-  import {mapActions} from 'vuex'
+  import {mapActions, mapGetters, mapMutations} from 'vuex'
 
   const LAYER_HEIGHT = 40;
   export default{
@@ -103,12 +103,20 @@
         }
       },
       ...mapActions([
-        'playSong'
+        'playSong',
+        'randomPlay'
       ]),
       selectSong(songs, index){
         this.playSong({
           list: songs,
           index: index
+        })
+      },
+      randomPlayAll(){
+        let index = Math.floor(Math.random() * this.songs.length);
+        this.randomPlay({
+          index,
+          list: this.songs
         })
       }
     },
@@ -140,9 +148,9 @@
     font-size: 16px;
     color: @color-theme;
     z-index: 1000;
-    i{
-      width:65%;
-      display:inline-block;
+    i {
+      width: 65%;
+      display: inline-block;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -195,7 +203,7 @@
       i {
         color: @color-theme-d;
         margin: 5px 0;
-        width:30px;
+        width: 30px;
         text-align: center;
         display: block;
         &.rank1 {
@@ -208,8 +216,8 @@
           color: red;
         }
       }
-      &>div{
-        width:80%;
+      & > div {
+        width: 80%;
       }
       span {
         display: block;

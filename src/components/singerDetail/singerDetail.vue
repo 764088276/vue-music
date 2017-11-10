@@ -5,9 +5,8 @@
 </template>
 
 <script type="text/javascript">
-  import backNav from 'base/backnav/backNav'
   import {mapState, mapGetters} from 'vuex'
-  import {getSingerDetail} from 'api/singerDetail'
+  import {getSingerDetail, getAlbumDetail} from 'api/singerDetail'
   import {ERR_OK} from 'api/config'
   import {createSong} from 'assets/js/song'
   import musicList from 'components/musicList/musicList'
@@ -17,8 +16,8 @@
       return {
         songs: [],
         songList: [],
-        name:'',
-        bgImage:''
+        name: '',
+        bgImage: ''
       }
     },
     computed: {
@@ -27,16 +26,21 @@
       ])
     },
     created(){
-      this.getSingerData();
+      if (this.singer.albumid) {
+        this.getAlbumData();
+      } else {
+        this.getSingerData();
+      }
+
     },
     mounted(){
-        this.name=this.singer.name;
-        this.bgImage=this.singer.avatar;
+      this.name = this.singer.name;
+      this.bgImage = this.singer.avatar;
     },
     methods: {
       getSingerData(){
         if (!this.singer.id) {
-          this.$router.push('/singer')
+          this.$router.back();
         }
         getSingerDetail(this.singer).then((res) => {
           if (res.code == ERR_OK) {
@@ -44,8 +48,19 @@
           }
           this.songs.forEach((song) => {
             this.songList.push(createSong(song.musicData));
-          });
+          })
           console.log(this.songList)
+        })
+      },
+      getAlbumData(){
+        getAlbumDetail(this.singer.albummid).then(res => {
+          if (res.code == ERR_OK) {
+            console.log(res);
+            this.songs = res.data.list;
+          }
+          this.songs.forEach((song) => {
+            this.songList.push(createSong(song))
+          })
         })
       }
     },

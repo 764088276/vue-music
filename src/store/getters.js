@@ -11,3 +11,5 @@ export const currentSong = state => state.playList[state.currentIndex] || {};
 export const playing = state => state.playing;
 export const disc = state => state.disc;
 export const rankList = state => state.rankList;
+export const searchHistory = state => state.searchHistory;
+export const playHistory = state => state.playHistory;

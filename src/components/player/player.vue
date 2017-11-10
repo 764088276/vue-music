@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-if="noLengthHide">
     <transition name="full"
                 @enter="enter"
                 @after-enter="afterEnter"
@@ -57,7 +57,7 @@
           <li class="quick-back iconfont icon-kuaijin1" @click="prev"></li>
           <li class="play iconfont" :class="iconPlay" @click="changePlayState"></li>
           <li class="iconfont icon-kuaijin quick-go" @click="next"></li>
-          <li class="iconfont icon-liebiao2 list"></li>
+          <li class="iconfont icon-shoucang collect"></li>
         </ul>
       </div>
     </transition>
@@ -82,12 +82,19 @@
         <div class="play-operation" v-show="currentSong.name">
           <span class="play iconfont" :class="iconPlay" @click.stop="changePlayState"></span>
           <span class="iconfont icon-kuaijin quick-go" @click.stop="next"></span>
-          <span class="iconfont icon-liebiao2 list"></span>
+          <span class="iconfont icon-liebiao2 list" @click.stop="showList"></span>
         </div>
+        <play-list ref="playList"></play-list>
       </div>
     </transition>
-    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="timeUpDate"
+    <!--清空播放列表后若不移除audio标签，会播放历史音频-->
+    <audio :src="currentSong.url"
+           ref="audio"
+           @canplay="ready"
+           @error="error"
+           @timeupdate="timeUpDate"
            @ended="ended"
+           v-if="currentSong.id"
     ></audio>
   </div>
 </template>
@@ -100,6 +107,7 @@
   import Lyric from 'lyric-parser'
   import scroll from 'base/scroll/scroll'
   import cssPrefix from 'assets/js/dom'
+  import playList from 'components/playlist/playlist'
 
   const transform = cssPrefix('transform');
   const transition = cssPrefix('transition');
@@ -115,7 +123,8 @@
         lyric: null,
         currentLine: 0,
         currentShow: 'cd',
-        touch: {}
+        touch: {},
+        noLengthHide: true
       }
     },
     computed: {
@@ -129,10 +138,10 @@
       ]),
       //如果把跟mapGetters相关的数据放在data中会绑定不到data中
       iconPlay(){
-        return this.playing ? 'icon-zanting' : 'icon-bofang'
+        return this.currentSong.id?(this.playing ? 'icon-zanting' : 'icon-bofang'):''
       },
       cdRotate(){
-        return this.playing ? 'rotate' : 'rotate rotate-pause'
+        return this.currentSong.id?(this.playing ? 'rotate' : 'rotate rotate-pause'):''
       },
       modeState(){
         if (this.mode == 0) {
@@ -291,6 +300,9 @@
         this.songReady = true;
       },
       timeUpDate(){
+        if(!this.currentSong.id){
+            return
+        }
         this.currentTime = parseInt(this.$refs.audio.currentTime);
       },
       error(){
@@ -328,7 +340,6 @@
       },
       getLyricData(){
         this.currentSong.getLyric().then(res => {
-
           this.lyric = new Lyric(res, this.lyricHandler);
           if (this.playing) {
             this.lyric.play()
@@ -346,7 +357,7 @@
       },
 //      cd和歌词的切换
       touchBegin(){
-        if (!this.lyric.lines.length&&this.lyric) {
+        if (!this.lyric.lines.length && this.lyric) {
           return
         }
         let e = window.event;
@@ -355,7 +366,7 @@
         this.touch.startY = touch.pageY;
       },
       touchSlide(){
-        if (!this.lyric.lines.length&&this.lyric) {
+        if (!this.lyric.lines.length && this.lyric) {
           return
         }
         let e = window.event;
@@ -403,13 +414,19 @@
         this.$refs.cdWrapper.style[transition] = `all 0.5s`;
         this.$refs.cdWrapper.style.opacity = opacity;
         this.$refs.scroll.$el.style[transition] = `all 0.5s`;
+      },
+      showList(){
+        this.$refs.playList.showList();
       }
     },
     watch: {
       currentSong(newVal, oldVal){
-//        if (newVal === oldVal) {
-//          return
-//        }
+        if (newVal === oldVal) {
+          return
+        }
+        if (!this.currentSong.id) {
+          return
+        }
         if (this.lyric) {
           this.lyric.stop();
         }
@@ -425,7 +442,8 @@
       }
     },
     components: {
-      scroll
+      scroll,
+      playList
     }
   }
 </script>
@@ -469,10 +487,10 @@
           }
           span {
             display: inline-block;
-            white-space:nowrap;
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            width:70%;
+            width: 70%;
           }
         }
         .icon-xiala {

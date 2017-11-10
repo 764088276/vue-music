@@ -12,7 +12,7 @@
           </slide>
         </div>
         <h2 class="recom-title">热门推荐</h2>
-        <ul class="new-disk-list" v-if="this.diskList">
+        <ul class="new-disk-list" v-if="diskList.length">
           <li v-for="item in diskList" @click="selectDisc(item)">
             <img v-lazy="item.cover" alt="宣传图" class="avatar">
             <div class="desc">
@@ -43,42 +43,45 @@
       return {
         slidePic: [],
         diskList: [],
-        hasLoad: false,
-        listenNum(num){
-          let transNum = parseInt(num) / 10000;
-          if (transNum < 1) {
-            return num
-          } else {
-            return +transNum.toFixed(1) + "万"
-          }
-        }
+        hasLoad: false
+
       }
     },
     created(){
       this.getData();
       this._getDiskList();
+//      console.log(this.diskList);
     },
     methods: {
       getData(){
         getRecommend().then((res) => {
-          if(res.code === ERR_OK){
-          this.slidePic = res.data.slider;
-        }
-      })
+          if (res.code === ERR_OK) {
+            this.slidePic = res.data.slider;
+          }
+        })
       },
       _getDiskList(){
         getDiskList().then((res) => {
-          if (res.code === ERR_OK){
-          this.diskList = res.recomPlaylist.data.v_hot;
+          if (res.code === ERR_OK) {
+            this.diskList = res.recomPlaylist.data.v_hot;
+          }
+          console.log(res.recomPlaylist.data);
+        })
+      },
+      listenNum(num){
+        let transNum = parseInt(num) / 10000;
+        if (transNum < 1) {
+          return num
+        } else {
+          return +transNum.toFixed(1) + "万"
         }
-      })
       },
       imgLoad(){
         //用于防止轮播图未撑开造成的better-scroll渲染不成功
         if (!this.hasLoad) {
           setTimeout(() => {
             this.$refs.scroll.refresh();
-        },20);
+          }, 20);
           this.hasLoad = true;
         }
       },
@@ -86,9 +89,9 @@
         setDisc: 'SET_DISC'
       }),
       selectDisc(disc){
-          this.$router.push({
-              path:`/recommend/${disc.content_id}`
-          });
+        this.$router.push({
+          path: `/recommend/${disc.content_id}`
+        });
         this.setDisc(disc);
       }
     },
