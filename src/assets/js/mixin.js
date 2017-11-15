@@ -1,7 +1,5 @@
-/**
- * Created by HG on 2017/10/25.
- */
-import {mapGetters} from 'vuex'
+
+import {mapGetters,mapActions} from 'vuex'
 
 
 /*mixin相当于对不同功能组件中相同功能的模块进行了一次封装，
@@ -10,7 +8,7 @@ import {mapGetters} from 'vuex'
 export const playListMixin = {
   computed: {
     ...mapGetters([
-      'playList'
+      'playHistory'
     ])
   },
   mounted(){

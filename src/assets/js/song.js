@@ -16,7 +16,6 @@ export default class Song {
     this.image = image;
     this.url = url;
   }
-
   getLyric() {
     if(this.lyric){
       return Promise.resolve(this.lyric);
@@ -24,7 +23,7 @@ export default class Song {
     return new Promise((resolve, reject) => {
       getSongLyric(this.mid).then(res=>{
         if(res.data.retcode===ERR_OK){
-          this.lyric = Base64.decode(res.data.lyric)
+          this.lyric = Base64.decode(res.data.lyric);
           resolve(this.lyric)
         }else{
           reject('a')

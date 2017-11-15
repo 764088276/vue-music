@@ -67,7 +67,8 @@
     },
     methods: {
       ...mapActions([
-        'addPlaySong'
+        'addPlaySong',
+        'addPlayHistory'
       ]),
       ...mapMutations({
         setSinger: 'SET_SINGER',
@@ -121,7 +122,8 @@
           let song = createSong(item);
           this.addPlaySong(song);
         }
-        this.$emit('selected')
+        this.$emit('selected');
+
       }
     },
     components: {

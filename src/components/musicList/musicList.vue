@@ -13,13 +13,12 @@
     </div>
     <scroll :data="songs" :listenScroll=true class="scroll-wrapper" ref="scrollWrapper" @scroll="scroll">
       <ul class="song-list">
-        <li v-for="(song,index) in songs" @click="selectSong(songs,index)">
+        <li v-for="(song,index) in songs" @click="selectSong(songs,index,song)">
           <i v-show="rank" :class="rankNum(index+1)">{{index+1}}</i>
           <div>
             <span class="text">{{song.name}}</span>
             <span class="singer">{{getSingerName(song)}}</span>
           </div>
-
         </li>
       </ul>
       <!--加载的进度条-->
@@ -104,13 +103,14 @@
       },
       ...mapActions([
         'playSong',
-        'randomPlay'
+        'randomPlay',
+        'addPlayHistory'
       ]),
-      selectSong(songs, index){
+      selectSong(songs, index,song){
         this.playSong({
           list: songs,
           index: index
-        })
+        });
       },
       randomPlayAll(){
         let index = Math.floor(Math.random() * this.songs.length);

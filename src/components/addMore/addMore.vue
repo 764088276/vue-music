@@ -12,18 +12,25 @@
             {{item}}
           </li>
         </ul>
-          <scroll class="list-detail">
-            <ul>
-              <li>222</li>
-            </ul>
-          </scroll>
+        <scroll class="list-detail" :data="playHistory" ref="addMoreScroll" v-if="currentListIndex===0">
+          <ul>
+            <li v-for="song in playHistory" @click="selectSong(song)">
+              <span class="song-name">{{song.name}}</span><br>
+              <span class="singer-name">{{song.singer}}</span>
+            </li>
+          </ul>
+        </scroll>
       </div>
+      <top-tip text="已添加1首歌到播放列表" ref="topTip"></top-tip>
     </div>
   </transition>
 </template>
 
 <script type="text/javascript">
   import scroll from 'base/scroll/scroll'
+  import {mapGetters, mapActions} from 'vuex'
+  import suggestList from 'base/searchList/searchList'
+  import topTip from 'base/topTip/topTip'
 
   export default{
     props: {
@@ -43,10 +50,22 @@
         query: ''
       }
     },
+    computed: {
+      ...mapGetters([
+        'playHistory'
+      ])
+    },
     methods: {
+      ...mapActions([
+        'insertSong',
+        'addPlaySong'
+      ]),
       showAddMore(){
         this.showMark = true;
-        this.currentListIndex = 0;
+//        this.currentListIndex = 0;
+        setTimeout(() => {
+          this.$refs.addMoreScroll.refresh()
+        }, 200);
       },
       hideAddMore(){
         this.showMark = false
@@ -56,10 +75,22 @@
       },
       getQuery(query){
         this.query = query
+      },
+      selectSong(song){
+        this.insertSong(song);
+      }
+    },
+    watch: {
+      playHistory(){
+        setTimeout(() => {
+          this.$refs.addMoreScroll.refresh()
+        }, 200);
       }
     },
     components: {
-      scroll
+      scroll,
+      suggestList,
+      topTip
     }
   }
 </script>
@@ -80,7 +111,7 @@
       text-align: center;
       color: @color-text-d;
       line-height: 40px;
-      background:@color-background-d;
+      background: @color-background-d;
       .close {
         height: 100%;
         width: 40px;
@@ -112,19 +143,33 @@
           }
         }
       }
-      .list-detail{
-        position:absolute;
-        top:100px;
-        bottom:0;
-        width:100%;
+      .list-detail {
+        position: absolute;
+        top: 100px;
+        bottom: 0;
+        width: 100%;
         overflow: hidden;
-        ul{
-          padding:0 14px;
-          box-sizing:border-box;
-          li{
-            width:100%;
-            line-height:24px;
-            color:@color-sub-theme
+        ul {
+          padding: 0 14px;
+          box-sizing: border-box;
+          li {
+            font-size: 14px;
+            width: 100%;
+            margin-bottom: 10px;
+            color: @color-sub-theme;
+            span {
+              width: 100%;
+              line-height: 18px;
+              display: inline-block;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              color: @color-text-ll;
+              &.singer-name {
+                font-size: 12px;
+                color: @color-text-d;
+              }
+            }
           }
         }
       }

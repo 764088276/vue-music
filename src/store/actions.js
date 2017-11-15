@@ -2,7 +2,8 @@
  * Created by HG on 2017/10/11.
  */
 import * as types from './mutation_types'
-import {searchHistory, deleteSearch, clearSearch} from 'api/cache'
+import {searchHistory, deleteSearch, clearSearch, playHistory} from 'api/cache'
+import Song from 'assets/js/song'
 
 export const playSong = function ({commit, state}, {list, index}) {
   commit(types.SET_PLAY_LIST, list);
@@ -18,7 +19,7 @@ export const randomPlay = function ({commit, state}, {list, index}) {
   if (currentIndex === -1) {
     commit(types.SET_CURRENT_INDEX, index);
     commit(types.SET_PLAY_LIST, list);
-    commit(types.SET_FULL_SCREEN,true);
+    commit(types.SET_FULL_SCREEN, true);
   }
   commit(types.SET_MODE, 2);
 };
@@ -51,6 +52,18 @@ export const addPlaySong = function ({commit, state}, song) {
   commit(types.SET_FULL_SCREEN, true);
   commit(types.SET_CURRENT_INDEX, currentIndex);
   commit(types.SET_PLAYING, true);
+};
+
+export const insertSong = function ({commit, state}, song) {
+  let playList = state.playList.slice(0);
+  let index = playList.findIndex((item) => {
+    return item.id === song.id
+  });
+  if (index > -1) {
+    playList.splice(index,1);
+  }
+  playList.push(song);
+  commit(types.SET_PLAY_LIST, playList);
 };
 
 export const setHistory = function ({commit, state}, query) {
@@ -93,4 +106,10 @@ export const clearPlayList = function ({commit, state}) {
   commit(types.SET_PLAYING, false);
   commit(types.SET_FULL_SCREEN, false);
   commit(types.SET_CURRENT_INDEX, -1);
+};
+
+//playHistory 的实现
+export const addPlayHistory = function ({commit, state}, song) {
+  // console.log(song);
+  commit(types.SET_PLAY_HISTORY, playHistory(song));
 };

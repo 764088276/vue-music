@@ -2,7 +2,7 @@
  * Created by HG on 2017/10/11.
  */
 import {play_mode} from 'assets/js/config'
-import {searchHistory} from 'api/cache'
+import {searchHistory,playHistory} from 'api/cache'
 
 //state中主要保存传递的数据
 const state={
@@ -16,6 +16,6 @@ const state={
   disc:{},
   rankList:{},
   searchHistory:searchHistory(),
-  playHistory:[]
+  playHistory:playHistory()
 };
 export default state

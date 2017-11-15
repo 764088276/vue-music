@@ -100,7 +100,7 @@
 </template>
 
 <script type="text/javascript">
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import animations from 'create-keyframe-animation'
   import play_mode from 'assets/js/config'
   import {getSongLyric} from 'api/song'
@@ -108,6 +108,7 @@
   import scroll from 'base/scroll/scroll'
   import cssPrefix from 'assets/js/dom'
   import playList from 'components/playlist/playlist'
+  import Song from 'assets/js/song'
 
   const transform = cssPrefix('transform');
   const transition = cssPrefix('transition');
@@ -138,10 +139,10 @@
       ]),
       //如果把跟mapGetters相关的数据放在data中会绑定不到data中
       iconPlay(){
-        return this.currentSong.id?(this.playing ? 'icon-zanting' : 'icon-bofang'):''
+        return this.currentSong.id ? (this.playing ? 'icon-zanting' : 'icon-bofang') : ''
       },
       cdRotate(){
-        return this.currentSong.id?(this.playing ? 'rotate' : 'rotate rotate-pause'):''
+        return this.currentSong.id ? (this.playing ? 'rotate' : 'rotate rotate-pause') : ''
       },
       modeState(){
         if (this.mode == 0) {
@@ -176,6 +177,9 @@
         setCurrentIndex: 'SET_CURRENT_INDEX',
         setPlayingMode: 'SET_MODE'
       }),
+      ...mapActions([
+        'addPlayHistory'
+      ]),
       getMini(){
         this.setFullScreen(false)
       },
@@ -298,10 +302,12 @@
       },
       ready(){
         this.songReady = true;
+        console.log(this.currentSong.getLyric);
+        this.addPlayHistory(this.currentSong);
       },
       timeUpDate(){
-        if(!this.currentSong.id){
-            return
+        if (!this.currentSong.id) {
+          return
         }
         this.currentTime = parseInt(this.$refs.audio.currentTime);
       },
@@ -427,13 +433,15 @@
         if (!this.currentSong.id) {
           return
         }
+
         if (this.lyric) {
           this.lyric.stop();
         }
-        this.$nextTick(() => {
+        setTimeout(() => {
+          this.lyric=null;
           this.$refs.audio.play();
           this.getLyricData();
-        })
+        }, 20);
       },
       currentTime(newVal){
         let scale = newVal / this.currentSong.interval;
