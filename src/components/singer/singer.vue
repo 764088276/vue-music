@@ -97,7 +97,6 @@
         letterList.unshift(hotList);
         letterList.push(numList);
         this.singerList = letterList;
-        console.log(this.singerList)
       }
     },
     components: {

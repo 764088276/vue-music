@@ -96,6 +96,7 @@
            @ended="ended"
            v-if="currentSong.id"
     ></audio>
+    <!--<confirm text="抱歉，该歌曲未被收录" ref="confirm" :alertState=true @sure="confirmSure"></confirm>-->
   </div>
 </template>
 
@@ -109,6 +110,7 @@
   import cssPrefix from 'assets/js/dom'
   import playList from 'components/playlist/playlist'
   import Song from 'assets/js/song'
+  import confirm from "base/confirm/confirm"
 
   const transform = cssPrefix('transform');
   const transition = cssPrefix('transition');
@@ -254,22 +256,28 @@
         }
       },
       next(){
+        clearTimeout(this.confirmTimer);
         if (!this.songReady) {
           return false
         }
         let index;
-        //不同播放模式下的播放
-        if (this.mode == 0) {
-          index = this.currentIndex + 1;
-          if (index >= this.playList.length) {
-            index = 0;
-          }
-        } else if (this.mode == 1) {
+        if (this.playList.length === 1) {
+          //解决播放列表只有一首歌的出错情况
           index = this.currentIndex;
           this.$refs.audio.currentTime = 0;
-
         } else {
-          index = Math.floor(Math.random() * this.playList.length)
+          //不同播放模式下的播放
+          if (this.mode == 0) {
+            index = this.currentIndex + 1;
+            if (index >= this.playList.length) {
+              index = 0;
+            }
+          } else if (this.mode == 1) {
+            index = this.currentIndex;
+            this.$refs.audio.currentTime = 0;
+          } else {
+            index = Math.floor(Math.random() * this.playList.length)
+          }
         }
         this.setCurrentIndex(index);
         if (!this.playing) {
@@ -302,7 +310,7 @@
       },
       ready(){
         this.songReady = true;
-        console.log(this.currentSong.getLyric);
+        clearTimeout(this.errTimer);
         this.addPlayHistory(this.currentSong);
       },
       timeUpDate(){
@@ -312,11 +320,15 @@
         this.currentTime = parseInt(this.$refs.audio.currentTime);
       },
       error(){
-        setTimeout(() => {
-          alert('对不起，该歌曲暂未收录');
-          this.songReady = true;
-          this.next()
-        }, 600)
+        this.songReady = true;
+        this.hasError=true;
+        this.errTimer=setTimeout(()=>{
+            this.next();
+        },2000)
+      },
+      confirmSure(){
+        this.songReady = true;
+
       },
       ended(){
         this.songReady = true;
@@ -345,8 +357,17 @@
         this.modePlayShow = false;
       },
       getLyricData(){
+
         this.currentSong.getLyric().then(res => {
+          if(this.hasError){
+            return
+          }
           this.lyric = new Lyric(res, this.lyricHandler);
+          //解决当currentShow==="lyric"时切换到无歌词歌曲时的出错
+          if (this.lyric.lines.length === 0 && this.currentShow === "lyric") {
+            this.currentShow = "cd";
+            this.$refs.cdWrapper.style.opacity = 1;
+          }
           if (this.playing) {
             this.lyric.play()
           }
@@ -363,8 +384,8 @@
       },
 //      cd和歌词的切换
       touchBegin(){
-        if (!this.lyric.lines.length && this.lyric) {
-          return
+        if(!this.lyric||this.lyric.lines.length===0){
+            return
         }
         let e = window.event;
         const touch = e.touches[0];
@@ -372,7 +393,7 @@
         this.touch.startY = touch.pageY;
       },
       touchSlide(){
-        if (!this.lyric.lines.length && this.lyric) {
+        if(!this.lyric||this.lyric.lines.length===0){
           return
         }
         let e = window.event;
@@ -381,6 +402,10 @@
         this.touch.moveY = touch.pageY;
         let deltaX = this.touch.moveX - this.touch.startX;
         let deltaY = this.touch.moveY - this.touch.startY;
+        //解决左右滑动的同时还能上下滑动的问题
+        if (Math.abs(deltaX) < Math.abs(deltaY)) {
+          return
+        }
         let left = this.currentShow === 'cd' ? window.innerWidth : 0;
         let cdOpacity = this.currentShow === 'cd' ? 1 : 0;
         let lyricPos = Math.max(0, Math.min(left + deltaX, window.innerWidth));
@@ -427,18 +452,18 @@
     },
     watch: {
       currentSong(newVal, oldVal){
+        this.hasError=false;
         if (newVal === oldVal) {
           return
         }
         if (!this.currentSong.id) {
           return
         }
-
         if (this.lyric) {
           this.lyric.stop();
         }
-        setTimeout(() => {
-          this.lyric=null;
+        clearTimeout(this.timer);
+        this.timer = setTimeout(() => {
           this.$refs.audio.play();
           this.getLyricData();
         }, 20);
@@ -451,7 +476,8 @@
     },
     components: {
       scroll,
-      playList
+      playList,
+      confirm
     }
   }
 </script>
@@ -633,6 +659,7 @@
           display: block;
           color: @color-theme;
           line-height: 18px;
+          font-size:16px;
           &.singer-name {
             font-size: 12px;
             color: @color-theme-d;
@@ -727,7 +754,7 @@
     font-size: 15px;
     left: 0;
     right: 0;
-    color: @color-dialog-background;
+    color: @color-theme-d;
     line-height: 24px;
     transform: translate3d(100%, 0, 0);
     .lyric-container {

@@ -17,9 +17,9 @@
             </li>
           </transition-group>
         </scroll>
-        <div class="add-more" @click="showAddMore">
-          添加更多歌曲
-        </div>
+        <!--<div class="add-more" @click="showAddMore">-->
+          <!--添加更多歌曲-->
+        <!--</div>-->
         <div class="close-list" @click.stop="hideList">
           关闭
         </div>

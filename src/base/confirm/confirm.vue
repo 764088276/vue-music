@@ -6,8 +6,8 @@
           {{text}}
         </div>
         <div class="confirm-btns">
-          <div class="cancel" @click.stop="cancel">{{cancelBtn}}</div>
           <div class="sure" @click.stop="sure">{{sureBtn}}</div>
+          <div class="cancel" @click.stop="cancel" v-show="!alertState">{{cancelBtn}}</div>
         </div>
       </div>
     </div>
@@ -28,6 +28,10 @@
       cancelBtn: {
         type: String,
         default: '取消'
+      },
+      alertState:{
+          type:Boolean,
+          default:false
       }
     },
     data(){
@@ -40,7 +44,10 @@
         this.confirmShow = true
       },
       hideConfirmCt(){
-        this.confirmShow = false
+        this.confirmShow = false;
+        if(this.alertState){
+            this.$emit('sure')
+        }
       },
       cancel(){
         this.$emit('cancel');
@@ -80,13 +87,14 @@
       .confirm-btns {
         width: 100%;
         line-height: 40px;
+        display:flex;
+        justify-content: center;
         > div {
-          float: left;
-          width: 50%;
+          width:100%;
           text-align: center;
           color: @color-theme-d;
-          &:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+          &:nth-child(2) {
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
             box-sizing: border-box;
           }
         }

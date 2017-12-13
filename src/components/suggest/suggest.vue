@@ -123,7 +123,6 @@
           this.addPlaySong(song);
         }
         this.$emit('selected');
-
       }
     },
     components: {

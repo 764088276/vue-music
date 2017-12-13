@@ -102,6 +102,7 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
+//静态资源目录
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 

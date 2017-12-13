@@ -19,7 +19,7 @@
     },
     created(){
       this.$watch('keyword', inputDam(function (newVal) {
-        this.$emit('keyword', newVal)
+        this.$emit('keyword', newVal.trim())
       }, 400))
     },
     methods: {

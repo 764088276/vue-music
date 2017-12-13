@@ -94,6 +94,8 @@
 </script>
 
 <style lang="less" rel="stylesheet/less" scoped>
+  @import "../../assets/less/variable";
+
   .scroll-container {
     width: 100%;
     position: fixed;
@@ -104,15 +106,18 @@
     overflow: hidden;
     color: white;
     h2 {
-      color: yellow;
-      background: red;
+      color:@color-theme;
+      background:@color-highlight-background;
+      padding:5px 10px;
+      box-sizing:border-box;
     }
   }
 
   .singer-item {
-    line-height: 30px;
-    height: 30px;
+    line-height: 40px;
+    height: 40px;
     margin: 7px 0;
+    padding:5px 0;
     /*overflow: auto;*/
     img {
       height: 100%;
@@ -124,14 +129,21 @@
 
   .right-bar-list {
     position: absolute;
-    right: 5px;
-    top: 50%;
+    right: 3%;
+    top: 45%;
     transform: translateY(-50%);
-    color: blue;
+    color: @color-dialog-background;
     z-index: 100;
-    background: #000;
+    font-size:14px;
+    font-weight:700;
+    background:@color-highlight-background;
+    padding:3px 2px;
+    li{
+      text-align: center;
+      margin:1px 0;
+    }
     .active {
-      color: yellow;
+      color: @color-theme;
     }
   }
 </style>

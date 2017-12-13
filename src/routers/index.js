@@ -3,14 +3,21 @@
  */
 import Vue from "vue"
 import Router from "vue-router"
-import rank from "../components/rank/rank"
-import recommend from "../components/recommend/recommend"
-import search from "../components/search/search"
-import singer from "../components/singer/singer"
-import singerDetail from '../components/singerDetail/singerDetail'
-import disc from 'components/disc/disc'
-import rankDetail from 'components/rankDetail/rankDetail'
+// import rank from "../components/rank/rank"
+// import recommend from "../components/recommend/recommend"
+// import search from "../components/search/search"
+// import singer from "../components/singer/singer"
+// import singerDetail from '../components/singerDetail/singerDetail'
+// import disc from 'components/disc/disc'
+// import rankDetail from 'components/rankDetail/rankDetail'
 
+const rank=()=>import('../components/rank/rank');
+const recommend=()=>import('../components/recommend/recommend');
+const search=()=>import('../components/search/search');
+const singer=()=>import('../components/singer/singer');
+const singerDetail=()=>import('../components/singerDetail/singerDetail');
+const disc=()=>import('../components/disc/disc');
+const rankDetail=()=>import('../components/rankDetail/rankDetail');
 Vue.use(Router);
 export default new Router({
   routes:[

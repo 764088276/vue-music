@@ -29,5 +29,6 @@
 
   #app {
     background: @color-background;
+    font-family: 'PingFang SC', 'STHeitiSC-Light', 'Helvetica-Light', arial, sans-serif, 'Droid Sans Fallback';
   }
 </style>

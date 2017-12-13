@@ -50,7 +50,6 @@
     created(){
       this.getData();
       this._getDiskList();
-//      console.log(this.diskList);
     },
     methods: {
       getData(){
@@ -65,7 +64,6 @@
           if (res.code === ERR_OK) {
             this.diskList = res.recomPlaylist.data.v_hot;
           }
-          console.log(res.recomPlaylist.data);
         })
       },
       listenNum(num){
