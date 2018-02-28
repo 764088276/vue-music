@@ -48,8 +48,7 @@
           }
           this.songs.forEach((song) => {
             this.songList.push(createSong(song.musicData));
-          })
-          console.log(this.songList)
+          });
         })
       },
       getAlbumData(){

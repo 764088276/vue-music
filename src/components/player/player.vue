@@ -88,13 +88,14 @@
       </div>
     </transition>
     <!--清空播放列表后若不移除audio标签，会播放历史音频-->
-    <audio :src="currentSong.url"
+
+    <audio :src="currentSongUrl"
            ref="audio"
            @canplay="ready"
            @error="error"
            @timeupdate="timeUpDate"
            @ended="ended"
-           v-if="currentSong.id"
+           v-if="currentSongUrl"
     ></audio>
     <!--<confirm text="抱歉，该歌曲未被收录" ref="confirm" :alertState=true @sure="confirmSure"></confirm>-->
   </div>
@@ -111,6 +112,7 @@
   import playList from 'components/playlist/playlist'
   import Song from 'assets/js/song'
   import confirm from "base/confirm/confirm"
+  import {getSongVkey} from 'api/song'
 
   const transform = cssPrefix('transform');
   const transition = cssPrefix('transition');
@@ -127,7 +129,8 @@
         currentLine: 0,
         currentShow: 'cd',
         touch: {},
-        noLengthHide: true
+        noLengthHide: true,
+        currentSongUrl:''
       }
     },
     computed: {
@@ -265,6 +268,7 @@
           //解决播放列表只有一首歌的出错情况
           index = this.currentIndex;
           this.$refs.audio.currentTime = 0;
+          this.$refs.audio.play();
         } else {
           //不同播放模式下的播放
           if (this.mode == 0) {
@@ -275,6 +279,7 @@
           } else if (this.mode == 1) {
             index = this.currentIndex;
             this.$refs.audio.currentTime = 0;
+            this.$refs.audio.play();
           } else {
             index = Math.floor(Math.random() * this.playList.length)
           }
@@ -462,11 +467,17 @@
         if (this.lyric) {
           this.lyric.stop();
         }
-        clearTimeout(this.timer);
-        this.timer = setTimeout(() => {
-          this.$refs.audio.play();
-          this.getLyricData();
-        }, 20);
+         getSongVkey(newVal.mid).then( (res)=> {
+           let data = res.data.items[0];
+           let vkey = data.vkey;
+           let filename = data.filename;
+           this.currentSongUrl=`https://dl.stream.qqmusic.qq.com/${filename}?vkey=${vkey}&guid=3483791342&uin=764088276&fromtag=66`;
+           clearTimeout(this.timer);
+           this.timer = setTimeout(() => {
+             this.$refs.audio.play();
+             this.getLyricData();
+           }, 20);
+         });
       },
       currentTime(newVal){
         let scale = newVal / this.currentSong.interval;

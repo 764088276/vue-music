@@ -119,6 +119,7 @@
           this.setSinger(item);
           this.$router.push(`/search/${item.id}`);
         } else {
+
           let song = createSong(item);
           this.addPlaySong(song);
         }

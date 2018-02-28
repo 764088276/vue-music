@@ -85,6 +85,7 @@
       },
       deleteItem(index){
         this.deleteSong(index);
+//        this.$refs.scroll.refresh();
       },
       clearList(){
         this.$refs.confirm.showConfirmCt();

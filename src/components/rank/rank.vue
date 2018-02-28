@@ -42,7 +42,6 @@
         getRankList().then(res => {
           if (res.code === ERR_OK) {
             this.rankList = res.data.topList;
-            console.log(this.rankList)
           }
         })
       },

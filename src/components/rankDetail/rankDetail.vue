@@ -38,7 +38,7 @@
             res.songlist.forEach((item) => {
               this.rankSong.push(createSong(item.data))
             });
-            this.title = res.topinfo.listName;
+            this.title = res.topinfo.ListName;
             this.bgImage = res.topinfo.pic_album;
           }
         })

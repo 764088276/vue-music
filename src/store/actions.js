@@ -90,6 +90,9 @@ export const deleteSong = function ({commit, state}, index) {
   } else if (index === currentIndex) {
     if (playList.length > 1) {
       commit(types.SET_PLAYING, true);
+      if(index===playList.length-1){
+        currentIndex--;
+      }
     } else {
       commit(types.SET_PLAYING, false);
       currentIndex = -1;
