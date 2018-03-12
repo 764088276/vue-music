@@ -15,6 +15,7 @@ npm run prod
 
 ## 项目所用到的技术点
 
+```bash
 #使用vue-cli webpack来搭建项目文件结构
 #使用vuex管理组件之间的数据
 #使用better-scroll来处理滚动特效和功能
@@ -23,4 +24,4 @@ npm run prod
 #使用create-keyframe-animation来处理播放器的切换动画特效
 #使用less来书写样式代码
 #使用了es6的语法
-
+```
